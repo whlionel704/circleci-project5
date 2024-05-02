@@ -1,0 +1,75 @@
+version: 2.1
+# orbs - reusable packages for our application
+orbs: 
+  node: circleci/node@5.0.1
+  docker: circleci/docker@2.1.4
+  snyk: snyk/snyk@1.5.0
+  #considered a 3rd party orb
+  #jobs - set of instructions / functions
+jobs:
+  build: # job name
+    docker: #environment
+      - image: cimg/node:16.10
+    steps: 
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run : |
+          echo "Installing dependencies..."
+          npm install
+  test:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run : |
+          echo "Running tests..."
+          npm run test
+  
+  publish:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check
+      - docker/build:
+          image: whlionel704/education-space
+      - docker/push:
+          image: whlionel704/education-space
+  
+  scan:
+    docker:
+      - image: cimg/node:16.10
+    environment: 
+      IMAGE_NAME: whlionel704/education-space
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
+
+#workflow - defines what sequence will the jobs run
+workflows:
+  simple_workflow:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only: main
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+      - scan:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
+
