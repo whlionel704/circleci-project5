@@ -25,7 +25,7 @@ jobs:
       - run: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Run Tests and rebuild the project
-          command: mvn test
+          command: ./mvnw test
   
   publish:
     executor: docker/docker
@@ -76,4 +76,3 @@ workflows:
           filters:
             branches:
               only: develop
-

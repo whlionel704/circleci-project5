@@ -8,4 +8,4 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests=true
 
-CMD ["mvn", "spring-boot:run"]
+CMD ["./mvnw", "spring-boot:run"]
