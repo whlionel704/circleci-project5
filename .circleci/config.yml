@@ -1,7 +1,7 @@
 version: 2.1
 # orbs - reusable packages for our application
 orbs: 
-  node: circleci/node@5.0.1
+  node: circleci/openjdk:17.0.7
   docker: circleci/docker@2.1.4
   snyk: snyk/snyk@1.5.0
   #considered a 3rd party orb
@@ -9,24 +9,23 @@ orbs:
 jobs:
   build: # job name
     docker: #environment
-      - image: cimg/node:16.10
+      - image: cimg/openjdk:17-jdk
     steps: 
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run : |
-          echo "Installing dependencies..."
-          npm install
+      - java/install-jdk:
+          version: 17
+      - run: |
+          echo "Building Spring Boot application..."
+          ./mvnw package -DskipTests=true
   test:
     docker:
-      - image: cimg/node:16.10
+      - image: cimg/openjdk:17-jdk
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run : |
-          echo "Running tests..."
-          npm run test
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Run Tests and rebuild the project
+          command: mvn test
   
   publish:
     executor: docker/docker
@@ -41,20 +40,19 @@ jobs:
   
   scan:
     docker:
-      - image: cimg/node:16.10
+      - image: cimg/openjdk:17-jdk
     environment: 
       IMAGE_NAME: whlionel704/education-space
     steps:
       - checkout
       - setup_remote_docker
-      - docker/check
       - run: docker build -t $IMAGE_NAME .
       - snyk/scan:
           docker-image-name: $IMAGE_NAME
 
 #workflow - defines what sequence will the jobs run
 workflows:
-  simple_workflow:
+  ci_workflow:
     jobs:
       - build:
         filters:
@@ -72,4 +70,10 @@ workflows:
           filters:
             branches:
               only: main
+      - publish:
+          requires:
+            - test
+          filters:
+            branches:
+              only: develop
 
