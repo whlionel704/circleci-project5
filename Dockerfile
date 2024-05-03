@@ -6,6 +6,6 @@ WORKDIR /app
 
 COPY src ./src
 
-RUN ./mvnw clean package -DskipTests=true
+RUN ./mvnw -B -DskipTests clean package
 
 CMD ["./mvnw", "spring-boot:run"]
