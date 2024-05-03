@@ -1,7 +1,6 @@
 version: 2.1
 # orbs - reusable packages for our application
 orbs: 
-  node: circleci/openjdk:17.0.7
   docker: circleci/docker@2.1.4
   snyk: snyk/snyk@1.5.0
   #considered a 3rd party orb
@@ -9,14 +8,15 @@ orbs:
 jobs:
   build: # job name
     docker: #environment
-      - image: cimg/openjdk:17-jdk
+      - image: cimg/openjdk:19.0.1
     steps: 
       - checkout
-      - java/install-jdk:
-          version: 17
-      - run: |
-          echo "Building Spring Boot application..."
-          ./mvnw package -DskipTests=true
+      - run:
+        name: Build
+        command: ./mvnw -B -DskipTests clean package
+      - run:
+        name: Test
+        command: ./mvnw test
   test:
     docker:
       - image: cimg/openjdk:17-jdk

@@ -1,11 +1,11 @@
-FROM openjdk:17-jdk
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+ENV PORT=8081
+COPY . /app
 
 WORKDIR /app
 
-COPY mvnw mvnw.cmd pom.xml ./
-
 COPY src ./src
 
-RUN mvn clean package -DskipTests=true
+RUN ./mvnw clean package -DskipTests=true
 
 CMD ["./mvnw", "spring-boot:run"]
