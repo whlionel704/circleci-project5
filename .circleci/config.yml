@@ -42,19 +42,19 @@ jobs:
       - snyk/scan:
           docker-image-name: $IMAGE_NAME
     
-    deploy:
-      docker:
-        - image: cimg/openjdk:19.0.1
-      steps:
-        - setup_remote_docker
-        - heroku/install
-        - checkout
-        - run:
-            name: Heroku Container Push
-            command: |
-              heroku container:login
-              heroku container:push web -a circleci-project5
-              heroku container:release web -a circleci-project5
+  deploy:
+    docker:
+      - image: cimg/openjdk:19.0.1
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - checkout
+      - run:
+          name: Heroku Container Push
+          command: |
+            heroku container:login
+            heroku container:push web -a circleci-project5
+            heroku container:release web -a circleci-project5
 
 #workflow - defines what sequence will the jobs run
 workflows:
