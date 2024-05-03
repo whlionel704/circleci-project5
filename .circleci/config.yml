@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
         name: Build
-        command: ./mvnw -B -DskipTests clean package
+        command: ./mvnw clean package -DskipTests=true
       - run:
         name: Test
         command: ./mvnw test
