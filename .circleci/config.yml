@@ -13,19 +13,10 @@ jobs:
       - checkout
       - run:
         name: Build
-        command: ./mvnw clean package -DskipTests
+        command: mvn clean package -DskipTests
       - run:
         name: Test
-        command: ./mvnw test
-  test:
-    docker:
-      - image: cimg/openjdk:17-jdk
-    steps:
-      - checkout
-      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run:
-          name: Run Tests and rebuild the project
-          command: ./mvnw test
+        command: mvn test
   
   publish:
     executor: docker/docker
