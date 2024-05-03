@@ -6,6 +6,6 @@ WORKDIR /app
 
 COPY src ./src
 
-RUN mvn clean package -DskipTests
+RUN mvn -B -DskipTests clean package
 
 CMD ["mvn", "spring-boot:run"]
