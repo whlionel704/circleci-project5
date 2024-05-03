@@ -57,7 +57,7 @@ jobs:
 
 #workflow - defines what sequence will the jobs run
 workflows:
-  ci_workflow:
+  ci_cd_workflow:
     jobs:
       - build:
           filters:
