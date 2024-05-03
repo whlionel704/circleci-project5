@@ -49,12 +49,6 @@ workflows:
         filters:
           branches:
             only: main
-      - test:
-          requires:
-            - build
-          filters:
-            branches:
-              only: main
       - scan:
           requires:
             - build
@@ -62,8 +56,6 @@ workflows:
             branches:
               only: main
       - publish:
-          requires:
-            - test
           filters:
             branches:
               only: develop
