@@ -25,15 +25,15 @@ jobs:
       - checkout
       - docker/check
       - docker/build:
-          image: whlionel704/circleci-project5
+          image: whlionel704/circleci-project5:v2
       - docker/push:
-          image: whlionel704/circleci-project5
+          image: whlionel704/circleci-project5:v2
   
   scan:
     docker:
       - image: cimg/openjdk:17-jdk
     environment: 
-      IMAGE_NAME: whlionel704/circleci-project5
+      IMAGE_NAME: whlionel704/circleci-project5:v2
     steps:
       - checkout
       - setup_remote_docker
